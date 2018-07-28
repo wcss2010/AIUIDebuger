@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AIUISerialDemo
+namespace AIUISerials
 {
-    class Constant
+    public class CommandConst
     {
         public static string QUERY_AIUI_STATE = "{\"type\": \"aiui_msg\",\"content\": {\"msg_type\":1,\"arg1\":0,\"arg2\":0,\"params\":\"\"}}";
 

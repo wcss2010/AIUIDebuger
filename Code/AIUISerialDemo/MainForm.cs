@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.Timers;
 using System.Runtime.InteropServices;
+using AIUISerials;
 
 namespace AIUISerialDemo
 {
@@ -17,12 +18,10 @@ namespace AIUISerialDemo
         [DllImport("kernel32.dll")]
         public static extern Boolean AllocConsole();
         [DllImport("kernel32.dll")]
-        public static extern Boolean FreeConsole();  
+        public static extern Boolean FreeConsole();
 
-        static Comm comm = new Comm();
+        static AIUIConnection comm = null;
         FileHelper fileHelper;
-
-        DataHandle dataHanle;
         System.Timers.Timer checkTimer = new System.Timers.Timer();
         string selectedSerial = "";
         string baud = "";
@@ -43,8 +42,6 @@ namespace AIUISerialDemo
             SetTimerParam();
             openBtn.Enabled = true;
             closeBtn.Enabled = false;
-
-            dataHanle = new DataHandle(comm, this);
         }
 
         private void openBtn_Click(object sender, EventArgs e)

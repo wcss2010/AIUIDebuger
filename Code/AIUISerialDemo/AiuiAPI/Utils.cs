@@ -5,18 +5,19 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 
-namespace AIUISerialDemo
+namespace AIUISerials
 {
-    class Utils
+    public class Utils
     {
         public static byte[] HexStringToByteArray(string s)
         {
             s = s.Replace("0x", "");
             s = s.Replace(",", "");
             string[] ss = s.Split(' ');
-            
+
             byte[] buffer = new byte[ss.Length];
-            for (int i = 0; i < ss.Length; i++) {
+            for (int i = 0; i < ss.Length; i++)
+            {
                 try
                 {
                     buffer[i] = (byte)Convert.ToByte(ss[i].Substring(0, ss[i].Length), 16);
@@ -30,8 +31,7 @@ namespace AIUISerialDemo
             }
             return buffer;
         }
-
-
+        
         public static byte CalcCheckCode(List<byte> d)
         {
             byte checkCode = 0;
@@ -66,7 +66,8 @@ namespace AIUISerialDemo
                         {
                             zipStream.CopyTo(resultStream);
                         }
-                        catch (InvalidDataException ex) {
+                        catch (InvalidDataException ex)
+                        {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine(ex + "\n");
                         }
@@ -80,6 +81,6 @@ namespace AIUISerialDemo
         {
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return Convert.ToInt64(ts.TotalSeconds).ToString();
-        }  
+        }
     }
 }

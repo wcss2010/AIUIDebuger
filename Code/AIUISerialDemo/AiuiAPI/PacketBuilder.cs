@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AIUISerialDemo
+namespace AIUISerials
 {
-    class Packet
+    public class PacketBuilder
     {
         int seqId = 0;
         private static byte SYNC_HEAD = 0xA5;
@@ -19,7 +19,8 @@ namespace AIUISerialDemo
         private static byte CUSTOM_DATA_TYPE = 0x2A;
         private static byte CONFIRM_MESSAGE_TYPE = 0xff;
 
-        public List<byte> buildShakePacket() {
+        public List<byte> buildShakePacket()
+        {
             byte[] confirmMessage = new byte[12];
             confirmMessage[0] = SYNC_HEAD;
             confirmMessage[1] = USER_ID;
@@ -38,7 +39,8 @@ namespace AIUISerialDemo
             return confirmMessage.ToList();
         }
 
-        public List<byte> buildConfirmPacket() {
+        public List<byte> buildConfirmPacket()
+        {
             byte[] confirmMessage = new byte[12];
             confirmMessage[0] = SYNC_HEAD;
             confirmMessage[1] = USER_ID;
@@ -58,7 +60,7 @@ namespace AIUISerialDemo
 
         public List<byte> buildCmdPacket(String sendCmd)
         {
-            setSeqId(seqId+1);
+            setSeqId(seqId + 1);
             List<byte> list = new List<byte>();
             int len = sendCmd.Length;
             list.Add(SYNC_HEAD);
@@ -80,8 +82,9 @@ namespace AIUISerialDemo
             return list;
         }
 
-        public List<byte> buildTtsPacket(string text) {
-            string data = Constant.START_TTS.Replace("******", text);
+        public List<byte> buildTtsPacket(string text)
+        {
+            string data = CommandConst.START_TTS.Replace("******", text);
             UTF8Encoding utf8 = new UTF8Encoding();
             Byte[] encodedBytes = utf8.GetBytes(data);
 
@@ -122,7 +125,8 @@ namespace AIUISerialDemo
             {
                 encrypt = 0x01;
             }
-            else if (data[2].Equals("WPA")) {
+            else if (data[2].Equals("WPA"))
+            {
                 encrypt = 0x02;
             }
 
@@ -160,14 +164,15 @@ namespace AIUISerialDemo
         public List<byte> buildAIUIConfigPacket(string config)
         {
             string[] cfg = config.Split('|');
-            string aiui_config_msg = Constant.AIUI_CONFIG_MESSAGE.Replace("MYAPPID", cfg[0]);
-            aiui_config_msg = aiui_config_msg.Replace("MYKEY",cfg[1]);
+            string aiui_config_msg = CommandConst.AIUI_CONFIG_MESSAGE.Replace("MYAPPID", cfg[0]);
+            aiui_config_msg = aiui_config_msg.Replace("MYKEY", cfg[1]);
             aiui_config_msg = aiui_config_msg.Replace("MYSCENE", cfg[2]);
             if (cfg[3].Equals("Checked"))
             {
                 aiui_config_msg = aiui_config_msg.Replace("MY_LAUCH_MODE", "true");
             }
-            else {
+            else
+            {
                 aiui_config_msg = aiui_config_msg.Replace("MY_LAUCH_MODE", "false");
             }
 
@@ -199,7 +204,7 @@ namespace AIUISerialDemo
 
         public List<byte> buildVoiceControlPacket(Boolean isOn)
         {
-            string aiui_config_msg = Constant.VOICE_CONTROL_MESSAGE;
+            string aiui_config_msg = CommandConst.VOICE_CONTROL_MESSAGE;
             if (isOn)
             {
                 aiui_config_msg = aiui_config_msg.Replace("MYVOICE", "true");
@@ -237,7 +242,7 @@ namespace AIUISerialDemo
 
         public List<byte> buildResetWakePacket(Boolean isResetWake)
         {
-            string msg = Constant.RESET_WAKE_MESSAGE;
+            string msg = CommandConst.RESET_WAKE_MESSAGE;
             if (isResetWake)
             {
                 msg = msg.Replace("MY_MSG_TYPE", "8");
@@ -273,14 +278,16 @@ namespace AIUISerialDemo
 
         }
 
-        public List<byte> buildSmartConfigPacket(Boolean isOn) {
-            string smart_config = Constant.SMART_CONFIG_MESSAGE;
+        public List<byte> buildSmartConfigPacket(Boolean isOn)
+        {
+            string smart_config = CommandConst.SMART_CONFIG_MESSAGE;
 
             if (isOn)
             {
                 smart_config = smart_config.Replace("MYCMD", "start");
             }
-            else {
+            else
+            {
                 smart_config = smart_config.Replace("MYCMD", "stop");
                 //smart_config = smart_config.Replace(",\"timeout\": 60", "");
             }
@@ -312,7 +319,7 @@ namespace AIUISerialDemo
 
         public List<byte> buildACKPacket()
         {
-            string s = Constant.ACK_MESSAGE;
+            string s = CommandConst.ACK_MESSAGE;
 
 
             UTF8Encoding utf8 = new UTF8Encoding();
@@ -340,7 +347,8 @@ namespace AIUISerialDemo
             return list;
         }
 
-        public List<byte> buildCustomDataPacket(byte[] data) {
+        public List<byte> buildCustomDataPacket(byte[] data)
+        {
             List<byte> list = new List<byte>();
             int len = data.Length;
             list.Add(SYNC_HEAD);
@@ -360,9 +368,9 @@ namespace AIUISerialDemo
             return list;
         }
 
-        public void setSeqId(int id) {
+        public void setSeqId(int id)
+        {
             seqId = id;
         }
-
     }
 }
