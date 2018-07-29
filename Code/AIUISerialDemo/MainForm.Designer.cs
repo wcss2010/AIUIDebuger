@@ -1,4 +1,4 @@
-﻿namespace AIUISerialDemo
+﻿namespace AIUIDebuger
 {
     partial class AIUI
     {
@@ -42,6 +42,7 @@
             this.query_aiui_state_btn = new System.Windows.Forms.Button();
             this.aiuiMsgTv = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.customDataBtn = new System.Windows.Forms.Button();
             this.wakeUpBtn = new System.Windows.Forms.Button();
             this.resetWakeBtn = new System.Windows.Forms.Button();
             this.smartconfigBtn = new System.Windows.Forms.Button();
@@ -64,7 +65,6 @@
             this.consoleBtn = new System.Windows.Forms.Button();
             this.saveBtn = new System.Windows.Forms.Button();
             this.clearConsoleBtn = new System.Windows.Forms.Button();
-            this.customDataBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -208,6 +208,16 @@
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "常用命令";
+            // 
+            // customDataBtn
+            // 
+            this.customDataBtn.Location = new System.Drawing.Point(109, 158);
+            this.customDataBtn.Name = "customDataBtn";
+            this.customDataBtn.Size = new System.Drawing.Size(85, 29);
+            this.customDataBtn.TabIndex = 20;
+            this.customDataBtn.Text = "自定义数据";
+            this.customDataBtn.UseVisualStyleBackColor = true;
+            this.customDataBtn.Click += new System.EventHandler(this.customDataBtn_Click);
             // 
             // wakeUpBtn
             // 
@@ -438,16 +448,6 @@
             this.clearConsoleBtn.UseVisualStyleBackColor = true;
             this.clearConsoleBtn.Click += new System.EventHandler(this.clearConsoleBtn_Click);
             // 
-            // customDataBtn
-            // 
-            this.customDataBtn.Location = new System.Drawing.Point(109, 158);
-            this.customDataBtn.Name = "customDataBtn";
-            this.customDataBtn.Size = new System.Drawing.Size(85, 29);
-            this.customDataBtn.TabIndex = 20;
-            this.customDataBtn.Text = "自定义数据";
-            this.customDataBtn.UseVisualStyleBackColor = true;
-            this.customDataBtn.Click += new System.EventHandler(this.customDataBtn_Click);
-            // 
             // AIUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -471,7 +471,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "AIUI";
-            this.Text = "AIUI串口调试助手    by：潇洒风雪";
+            this.Text = "AIUI串口调试助手V1.2    by五彩书生    ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AIUI_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

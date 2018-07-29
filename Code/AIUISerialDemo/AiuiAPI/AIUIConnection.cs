@@ -16,15 +16,18 @@ namespace AIUISerials
     {
         public string Json { get; set; }
 
-        public AIUIConnectionReceivedEventArgs(string str)
+        public byte[] Source { get; set; }
+
+        public AIUIConnectionReceivedEventArgs(string str,byte[] data)
         {
             Json = str;
+            Source = data;
         }
     }
 
     public class AIUIConnection
     {
-        private AIUISerialDemo.AIUI aiui;
+        private AIUIDebuger.AIUI aiui;
 
         private SerialPortInput _serialPort = null;
         /// <summary>
@@ -52,18 +55,18 @@ namespace AIUISerials
 
         public event AIUIConnectionReceivedDelegate AIUIConnectionReceivedEvent;
 
-        protected void OnAIUIConnectionReceivedEvent(string json)
+        protected void OnAIUIConnectionReceivedEvent(string json,byte[] data)
         {
             if (AIUIConnectionReceivedEvent != null)
             {
-                AIUIConnectionReceivedEvent(this, new AIUIConnectionReceivedEventArgs(json));
+                AIUIConnectionReceivedEvent(this, new AIUIConnectionReceivedEventArgs(json,data));
             }
         }
 
-        public AIUIConnection(string comPort)
+        public AIUIConnection(string comPort, int baudrate)
         {
             _serialPort = new SerialPortInput();
-            _serialPort.SetPort(comPort, 115200, System.IO.Ports.StopBits.One, System.IO.Ports.Parity.None, 100, -1);
+            _serialPort.SetPort(comPort, baudrate, System.IO.Ports.StopBits.One, System.IO.Ports.Parity.None, 100, -1);
             _serialPort.MessageReceived += _serialPort_MessageReceived;
             
         }
@@ -147,7 +150,7 @@ namespace AIUISerials
                 }
 
                 //投递消息事件
-                OnAIUIConnectionReceivedEvent(Utils.Decompress(data));
+                OnAIUIConnectionReceivedEvent(Utils.Decompress(data), data);
             }
         }
 

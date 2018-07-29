@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIUISerialDemo", "AIUISerialDemo\AIUISerialDemo.csproj", "{EC6BD45E-9FF1-4C93-BDC6-9A6D2F9B1481}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIUIDebuger", "AIUISerialDemo\AIUIDebuger.csproj", "{EC6BD45E-9FF1-4C93-BDC6-9A6D2F9B1481}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

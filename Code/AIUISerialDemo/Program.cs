@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-namespace AIUISerialDemo
+namespace AIUIDebuger
 {
     static class Program
     {

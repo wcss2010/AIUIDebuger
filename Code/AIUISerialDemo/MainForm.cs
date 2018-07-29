@@ -11,7 +11,7 @@ using System.Timers;
 using System.Runtime.InteropServices;
 using AIUISerials;
 
-namespace AIUISerialDemo
+namespace AIUIDebuger
 {
     public partial class AIUI : Form
     {
@@ -49,29 +49,47 @@ namespace AIUISerialDemo
             if (!selectedSerial.Equals(""))
             {
                 checkTimer.Enabled = false;
-                comm.serialPort.PortName = selectedSerial;
-                //波特率
-                comm.serialPort.BaudRate = int.Parse(baud);
-                //数据位
-                comm.serialPort.DataBits = 8;
-                //两个停止位
-                comm.serialPort.StopBits = System.IO.Ports.StopBits.One;
-                //无奇偶校验位
-                comm.serialPort.Parity = System.IO.Ports.Parity.None;
-                comm.serialPort.ReadTimeout = 100;
-                comm.serialPort.WriteTimeout = -1;
+                comm = new AIUIConnection(selectedSerial,int.Parse(baud));
 
-                comm.Open();
-                if (comm.IsOpen)
+                comm.SerialPort.Connect();
+                if (comm.SerialPort.IsConnected)
                 {
-                    dataHanle.sendShake();
-                    comm.DataReceived += new Comm.EventHandle(comm_DataReceived);
+                    comm.SendShake();
+                    comm.AIUIConnectionReceivedEvent += comm_AIUIConnectionReceivedEvent;
+
                     openBtn.Enabled = false;
                     closeBtn.Enabled = true;
                 }
             }
             else {
                 MessageBox.Show("您没有选择串口", "系统提示");
+            }
+        }
+
+        void comm_AIUIConnectionReceivedEvent(object sender, AIUIConnectionReceivedEventArgs args)
+        {
+            if (recSetHex.Checked && !recSetASC.Checked)
+            {
+                SetRecTextDelegate d = new SetRecTextDelegate(setRecText);
+                string result = "";
+                foreach (byte b in args.Source)
+                {
+                    if (b <= 0x0f)
+                    {
+                        result += "0" + Convert.ToString(b, 16) + " ";
+                    }
+                    else
+                    {
+                        result += Convert.ToString(b, 16) + " ";
+                    }
+                }
+                Invoke(d, result);
+            }
+            else
+            {
+                string str = System.Text.Encoding.UTF8.GetString(args.Source);
+                SetRecTextDelegate d = new SetRecTextDelegate(setRecText);
+                Invoke(d, str);
             }
         }
 
@@ -108,33 +126,6 @@ namespace AIUISerialDemo
             }
         }
 
-        void comm_DataReceived(byte[] readBuffer)
-        {
-            dataHanle.handleRecieveData(readBuffer);
-            if (recSetHex.Checked && !recSetASC.Checked)
-            {
-                SetRecTextDelegate d = new SetRecTextDelegate(setRecText);
-                string result = "";
-                foreach (byte b in readBuffer)
-                {
-                    if (b <= 0x0f)
-                    {
-                        result += "0" + Convert.ToString(b, 16) + " ";
-                    }
-                    else
-                    {
-                        result += Convert.ToString(b, 16) + " ";
-                    }
-                }
-                Invoke(d, result);
-            }
-            else {
-                string str = System.Text.Encoding.UTF8.GetString(readBuffer);
-                SetRecTextDelegate d = new SetRecTextDelegate(setRecText);
-                Invoke(d, str);
-            }
-        } 
-
         public void SetTimerParam()
         {
             checkTimer.Elapsed += new ElapsedEventHandler(checkSerial);
@@ -156,12 +147,11 @@ namespace AIUISerialDemo
 
         private void closeBtn_Click(object sender, EventArgs e)
         {
-            if (comm.IsOpen) {
-                comm.Close();
+            if (comm != null && comm.SerialPort.IsConnected) {
+                comm.SerialPort.Disconnect();
                 checkTimer.Enabled = true;
                 openBtn.Enabled = true;
                 closeBtn.Enabled = false;
-                dataHanle.clearDataList();
             }
         }
 
@@ -183,15 +173,13 @@ namespace AIUISerialDemo
 
                 if (data != null)
                 {
-                    dataHanle.SendCardToOut(data.ToList());
+                    comm.SendToCard(data);
                 }
                 else
                 {
                     MessageBox.Show("发送格式出错");
-                }
-                       
-            }
-            
+                }                       
+            }            
         }
 
         private void setMessage(string result)
@@ -216,12 +204,12 @@ namespace AIUISerialDemo
 
         private void query_aiui_state_btn_Click(object sender, EventArgs e)
         {
-            dataHanle.SendCmd(Constant.QUERY_AIUI_STATE);
+            comm.SendCmd(CommandConst.QUERY_AIUI_STATE);
         }
 
         private void query_wifi_state_Click(object sender, EventArgs e)
         {
-            dataHanle.SendCmd(Constant.QUERY_WIFI_STATE);
+            comm.SendCmd(CommandConst.QUERY_WIFI_STATE);
         }
 
         private void clear_rec_btn_Click(object sender, EventArgs e)
@@ -244,7 +232,7 @@ namespace AIUISerialDemo
             string inMsg = Input.InputBox.ShowInputBox("请输入要合成的文本", string.Empty);
             if (inMsg.Trim() != string.Empty)
             {
-                dataHanle.SendTTSMessage(inMsg);
+                comm.SendTTSMessage(inMsg);
             }
 
         }
@@ -255,7 +243,7 @@ namespace AIUISerialDemo
             string[] data = inMsg.Split('|');
             if (data[0].Trim() != string.Empty)
             {
-                dataHanle.ConfigWifiMessage(inMsg.Trim());
+                comm.ConfigWifiMessage(inMsg.Trim());
             }
         }
 
@@ -265,31 +253,31 @@ namespace AIUISerialDemo
             string[] data = inMsg.Split('|');
             if (data[0].Trim() != string.Empty && data[1].Trim() != string.Empty)
             {
-                dataHanle.SendAIUIConfigMessage(inMsg.Trim());
+                comm.SendAIUIConfigMessage(inMsg.Trim());
             }
             
         }
 
         private void lauchVoiceBtn_Click(object sender, EventArgs e)
         {
-            dataHanle.SendLauchVoiceMessage(true);
+            comm.SendLauchVoiceMessage(true);
         }
 
         private void stopVoiceBtn_Click(object sender, EventArgs e)
         {
-            dataHanle.SendLauchVoiceMessage(false);
+            comm.SendLauchVoiceMessage(false);
         }
 
         private void smartconfigBtn_Click(object sender, EventArgs e)
         {
             if (!smartconfigOn)
             {
-                dataHanle.SendSmartConfigMessage(true);
+                comm.SendSmartConfigMessage(true);
                 smartconfigBtn.Text = "停止SmartConfig";
                 smartconfigOn = true;
             }
             else {
-                dataHanle.SendSmartConfigMessage(false);
+                comm.SendSmartConfigMessage(false);
                 smartconfigBtn.Text = "开启SmartConfig";
                 smartconfigOn = false;
             }
@@ -297,12 +285,12 @@ namespace AIUISerialDemo
 
         private void resetWakeBtn_Click(object sender, EventArgs e)
         {
-            dataHanle.SendWakeUpMessage(true);
+            comm.SendWakeUpMessage(true);
         }
 
         private void wakeUpBtn_Click(object sender, EventArgs e)
         {
-            dataHanle.SendWakeUpMessage(false);
+            comm.SendWakeUpMessage(false);
         }
 
         private void consoleBtn_Click(object sender, EventArgs e)
@@ -367,7 +355,7 @@ namespace AIUISerialDemo
                 byte[] data = Utils.HexStringToByteArray(inMsg.Trim());
                 if (data != null)
                 {
-                    dataHanle.SendCustomMessage(data);
+                    comm.SendCustomMessage(data);
                 }
                 else {
                     MessageBox.Show("发送格式出错");

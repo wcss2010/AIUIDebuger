@@ -8,7 +8,7 @@
     <ProjectGuid>{EC6BD45E-9FF1-4C93-BDC6-9A6D2F9B1481}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AIUISerialDemo</RootNamespace>
+    <RootNamespace>AIUIDebuger</RootNamespace>
     <AssemblyName>AIUI串口调试助手</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
