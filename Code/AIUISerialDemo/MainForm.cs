@@ -50,6 +50,7 @@ namespace AIUIDebuger
             {
                 checkTimer.Enabled = false;
                 comm = new AIUIConnection(selectedSerial,int.Parse(baud));
+                comm.aiui = this;
 
                 comm.SerialPort.Connect();
                 if (comm.SerialPort.IsConnected)

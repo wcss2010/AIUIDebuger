@@ -27,7 +27,7 @@ namespace AIUISerials
 
     public class AIUIConnection
     {
-        private AIUIDebuger.AIUI aiui;
+        public AIUIDebuger.AIUI aiui;
 
         private SerialPortInput _serialPort = null;
         /// <summary>
